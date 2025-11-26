@@ -1,10 +1,66 @@
-### `npm start`
+# Translate Custom Report Page
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+A React-based medical report viewer application with multi-language translation support. This application displays radiology reports with the ability to translate content into multiple languages (German, Spanish, French, Portuguese) while maintaining the original English text accessible via tooltips.
 
-The page will reload if you make edits.\
+## Getting Started
+
+### Prerequisites
+
+- Node.js (v16 or higher)
+- npm or yarn
+- LibreTranslate API running (default: `http://localhost:5000`)
+
+### Installation
+
+1. Clone the repository
+2. Install dependencies:
+```bash
+npm install
+```
+
+## Running the Application
+
+### Development Mode
+
+Run the app in development mode:
+
+```bash
+npm start
+```
+
+The application will open at [http://localhost:3000](http://localhost:3000) in your browser.
+
+The page will reload automatically when you make edits.\
 You will also see any lint errors in the console.
+
+### Production Build
+
+To create a production build:
+
+```bash
+npm run build
+```
+
+This creates an optimized production build in the `build` folder.
+
+## Testing
+
+### Run All Tests
+
+Run the test suite:
+
+```bash
+npm test
+```
+
+### Test Coverage
+
+The project includes unit tests for the TranslationApi class, covering:
+- Cache hit scenarios
+- API call behavior
+- Error handling
+- Array of strings translation
+- Cache persistence
 
 ## Environment Variables
 
