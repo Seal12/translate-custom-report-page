@@ -1,11 +1,12 @@
 import { TranslationLang } from '../utils/constants';
+import * as LocalStorage from "../utils/localStorage";
 
 export class TranslationApi {
     private static readonly apiUrl = 'http://localhost:5001';
 
     private static async getCache(data: any) {
         const cacheKey = JSON.stringify(data);
-        const cache = localStorage.getItem(cacheKey);
+        const cache = LocalStorage.getItem(cacheKey);
 
         if (cache) {
             return JSON.parse(cache);
@@ -16,7 +17,7 @@ export class TranslationApi {
 
     private static async setCache(data: any, response: any) {
         const cacheKey = JSON.stringify(data);
-        localStorage.setItem(cacheKey, JSON.stringify(response));
+        LocalStorage.setItem(cacheKey, JSON.stringify(response));
     }
 
     static async translate(text: string | string[], targetLanguage: TranslationLang) {

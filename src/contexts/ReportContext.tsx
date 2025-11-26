@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, ReactNode, useEffect, useCa
 import { TranslationLang, reportHeader, additionalInformation } from "../utils/constants";
 import { TranslationApi } from "../fetches/api";
 import { reportBasicInfo } from "../utils/constants";
+import * as LocalStorage from "../utils/localStorage";
 
 interface ReportFields {
     secondaryText: string;
@@ -23,6 +24,7 @@ interface ReportState {
     setLanguage: (language: TranslationLang) => void;
     fields: ReportFields;
     additionalInformationTitle: string;
+    isLoading: boolean;
 }
 
 const ReportContext = createContext<ReportState | undefined>(undefined);
@@ -37,6 +39,7 @@ const defaultFields: ReportFields = {
 };
 
 export const ReportProvider: React.FC<ReportProviderProps> = ({ children }) => {
+    const [isLoading, setIsLoading] = useState<boolean>(false);
     const [language, setLanguageState] = useState<TranslationLang>(TranslationLang.English);
     const [fields, setFields] = useState<ReportFields>({
         ...defaultFields,
@@ -44,6 +47,7 @@ export const ReportProvider: React.FC<ReportProviderProps> = ({ children }) => {
     const [additionalInformationTitle, setAdditionalInformationTitle] = useState<string>(additionalInformation.title);
 
     const setLanguage = (newLanguage: TranslationLang) => {
+        LocalStorage.setItem("language", newLanguage);
         setLanguageState(newLanguage);
     };
 
@@ -52,6 +56,7 @@ export const ReportProvider: React.FC<ReportProviderProps> = ({ children }) => {
         setLanguage,
         fields,
         additionalInformationTitle,
+        isLoading,
     };
 
     const resetFields = useCallback(() => {
@@ -61,8 +66,11 @@ export const ReportProvider: React.FC<ReportProviderProps> = ({ children }) => {
     }, [setFields]);
 
     const translate = useCallback(() => {
+        setIsLoading(true);
         if (language === TranslationLang.English) {
             resetFields();
+            setIsLoading(false);
+
             return;
         }
 
@@ -84,8 +92,17 @@ export const ReportProvider: React.FC<ReportProviderProps> = ({ children }) => {
             });
 
             setAdditionalInformationTitle(data.translatedText[fieldsToTranslate.length-1]);
+            setIsLoading(false);
         });
     }, [language, setFields, resetFields]);
+
+    useEffect(() => {
+        const cachedLanguage = LocalStorage.getItem("language");
+
+        if (cachedLanguage) {
+            setLanguage(cachedLanguage as TranslationLang);
+        }
+    }, []);
 
     useEffect(() => {
         resetFields();
