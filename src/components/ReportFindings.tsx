@@ -1,10 +1,13 @@
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports, @typescript-eslint/no-unused-vars
-import React, { SetStateAction, type Dispatch, useState } from "react";
+import React, { SetStateAction, type Dispatch, useState, useEffect, useCallback } from "react";
 import { Checkbox2 } from "./ui/checkbox";
 import { type Finding, type Findings } from "../models/finding";
 import { getRandomNumberInRange } from "../utils/numbers";
 import { selectRandomObjects } from "../utils/objects";
 import { randomXrayFinding } from "../utils/strings";
+import { useReportContext } from "../contexts/ReportContext";
+import { TranslationApi } from "../fetches/api";
+import { TranslationLang } from "../utils/constants";
 
 const styles = {
     gap3: {
@@ -58,6 +61,7 @@ const getFindings = (
     ) {
         localFindings = localFindings.concat(randomXrayFinding(isNormal));
     }
+
     return localFindings;
 };
 
@@ -72,10 +76,35 @@ const ReportFindings = ({
     isNormal,
     editable,
 }: ReportFindingsProps): JSX.Element => {
-    findings = findings ? findings : getFindings(isNormal, [0, 7], [0, 5]);
+    const { language } = useReportContext();
+
+    const [localFindings, setLocalFindings] = useState<Findings>([]);
+
+    const translateFindings = useCallback(async (findings: Findings) => {
+        const findingNames = findings.map(finding => finding.name);
+        const translatedFindings = await TranslationApi.translate(findingNames, language);
+
+        const _findings = findings.map((finding, index) => ({
+            ...finding,
+            name: translatedFindings.translatedText[index]
+        }));
+        
+        setLocalFindings(_findings);
+    }, [language]);
+
+    useEffect(() => {
+        const _localFindings = findings ? findings : getFindings(isNormal, [0, 7], [0, 5]);
+
+        if (language === TranslationLang.English) {
+            setLocalFindings(_localFindings);
+        } else {
+            translateFindings(_localFindings);
+        }
+    }, [findings, isNormal, language, translateFindings]);
+
     return (
         <div style={styles.gap3}>
-            {findings.map((finding) =>
+            {localFindings.map((finding) =>
                 editable || !editable ? (
                     <div key={finding.id} style={styles.smGap4}>
                         <ReportFinding

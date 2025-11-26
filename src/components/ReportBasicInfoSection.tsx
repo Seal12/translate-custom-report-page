@@ -3,7 +3,7 @@ import AddressInfoSection from "./AddressInfoSection";
 import ContactInfoSection from "./ContactInfoSection";
 import ParentDetailsSection from "./ParentDetailsSection";
 import ReportFindings from "./ReportFindings";
-import { reportBasicInfo } from "../utils/constants";
+import { useReportContext } from "../contexts/ReportContext";
 
 const styles = {
     container: {
@@ -34,10 +34,12 @@ const styles = {
 };
 
 const ReportBasicInfoSection = () => {
+    const { fields } = useReportContext();
+
     return (
         <div>
             <ReportSection
-                title={reportBasicInfo.reportTitle}
+                title={fields.reportTitle}
                 secondaryText="ID: 91"
             >
                 <div style={styles.container}>
@@ -49,20 +51,20 @@ const ReportBasicInfoSection = () => {
                         }}
                     >
                         <span style={styles.segmentTitle} translate="yes">
-                            {reportBasicInfo.service}:
+                            {fields.service}:
                         </span>
                         <span style={styles.segmentContent}>SignalRAY</span>
                     </div>
                     <div style={styles.segmentContainer}>
                         <span style={styles.segmentTitle} translate="yes">
-                            {reportBasicInfo.date}:
+                            {fields.date}:
                         </span>
                         <span style={styles.segmentContent}>01-01-1994</span>
                     </div>
                 </div>
             </ReportSection>
             <ReportSection
-                title={reportBasicInfo.hospitalDetailsTitle}
+                title={fields.hospitalDetailsTitle}
                 contentWrapperStyle={{
                     width: "100%",
                     justifyContent: "space-around",
@@ -76,18 +78,18 @@ const ReportBasicInfoSection = () => {
                     style={styles.segmentImg}
                 />
             </ReportSection>
-            <ReportSection title={reportBasicInfo.patientDetailsTitle}>
+            <ReportSection title={fields.patientDetailsTitle}>
                 <ParentDetailsSection patientId={9} />
             </ReportSection>
             <ReportSection
-                title={reportBasicInfo.abnormalFindingsTitle}
-                secondaryText={reportBasicInfo.confidenceTitle}
+                title={fields.abnormalFindingsTitle}
+                secondaryText={fields.confidenceTitle}
             >
                 <ReportFindings isNormal={false} editable={true} />
             </ReportSection>
             <ReportSection
-                title={reportBasicInfo.normalFindingsTitle}
-                secondaryText={reportBasicInfo.confidenceTitle}
+                title={fields.normalFindingsTitle}
+                secondaryText={fields.confidenceTitle}
             >
                 <ReportFindings isNormal={true} editable={true} />
             </ReportSection>

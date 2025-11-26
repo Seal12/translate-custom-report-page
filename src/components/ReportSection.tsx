@@ -29,8 +29,7 @@ const styles = {
 };
 
 const ReportSection = (props: ReportSectionInterface) => {
-    const { title, children, secondaryText, style, contentWrapperStyle } =
-        props;
+    const { title, children, secondaryText, style, contentWrapperStyle } = props;
     return (
         <div style={{ ...styles.container, ...style }}>
             <div style={styles.headerContainer}>

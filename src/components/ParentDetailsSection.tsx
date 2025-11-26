@@ -1,9 +1,11 @@
-import { CSSProperties, useEffect, useState } from "react";
+import { CSSProperties, useCallback, useEffect, useState } from "react";
 import InputTag from "./InputTag";
-import { PatientDetailsModel, patientId } from "../models/patientDetails";
+import { patientId } from "../models/patientDetails";
 import { convertToReadableString } from "../utils/strings";
 import { getRandomNumberInRange } from "../utils/numbers";
-import { loadingText } from "../utils/constants";
+import { loadingText, TranslationLang } from "../utils/constants";
+import { useReportContext } from "../contexts/ReportContext";
+import { TranslationApi } from "../fetches/api";
 
 const styles = {
     container: {
@@ -27,34 +29,66 @@ interface ParentDetailsSectionInterface {
     style?: CSSProperties;
 }
 
+interface Label {
+    key: string;
+    value: string;
+    label: string;
+}
+
 const ParentDetailsSection = (props: ParentDetailsSectionInterface) => {
+    const { language } = useReportContext();
+
     const { patientId, style } = props;
-    const [details, setDetails] = useState<PatientDetailsModel>();
+
+    const [labels, setLabels] = useState<Label[]>([]);
+
+    const translateLabels = useCallback(async (labels: string[]) => {
+
+        if (language === TranslationLang.English) {
+            return labels.map((label) => convertToReadableString(label));
+        }
+
+        const { translatedText, ok } = await TranslationApi.translate(labels, language);
+
+        if (ok) {
+            return translatedText;
+        } else {
+            return labels;
+        }
+    }, [language]);
 
     useEffect(() => {
-        setTimeout(() => {
-            setDetails(
-                require("../fetches/fetchPatientDetails.json")[patientId]
-            );
+        setTimeout(async () => {
+            const patientDetails = require("../fetches/fetchPatientDetails.json")[patientId];
+
+            const values = Object.values(patientDetails);
+            const keys = Object.keys(patientDetails);
+            const formattedLabels = keys.map((key) => convertToReadableString(key));
+
+            const translatedLabels = await translateLabels(formattedLabels);
+
+            const _labels = keys.map((label, i) => ({
+                key: label,
+                value: values[i],
+                label: translatedLabels[i]
+            }));
+
+            setLabels(_labels as Label[]);
         }, getRandomNumberInRange(200, 1800));
-    });
+    }, [language, patientId, translateLabels]);
 
     return (
         <div style={{ ...styles.container, ...style }}>
-            {details ? (
-                Object.keys(details).map((field) => (
-                    <div key={field} style={styles.detailContainer}>
-                        <span style={styles.detailTitle} translate="yes">
-                            {convertToReadableString(field)}
-                        </span>
-                        <InputTag>
-                            {details[field as keyof typeof details]}
-                        </InputTag>
+            {labels
+                ? labels.map((label) => (
+                    <div key={label.key} style={styles.detailContainer}>
+                        <span style={styles.detailTitle} translate="yes">{label.label}</span>
+                        <InputTag>{label.value}</InputTag>
                     </div>
-                ))
-            ) : (
-                <span translate="yes">{loadingText}</span>
-            )}
+                )) : (
+                    <span translate="yes">{loadingText}</span>
+                )
+            }
         </div>
     );
 };
