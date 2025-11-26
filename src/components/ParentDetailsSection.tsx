@@ -6,6 +6,7 @@ import { getRandomNumberInRange } from "../utils/numbers";
 import { loadingText, TranslationLang } from "../utils/constants";
 import { useReportContext } from "../contexts/ReportContext";
 import { TranslationApi } from "../fetches/api";
+import TranslationTooltip from "./TranslationTooltip";
 
 const styles = {
     container: {
@@ -33,6 +34,7 @@ interface Label {
     key: string;
     value: string;
     label: string;
+    originalLabel: string;
 }
 
 const ParentDetailsSection = (props: ParentDetailsSectionInterface) => {
@@ -64,13 +66,14 @@ const ParentDetailsSection = (props: ParentDetailsSectionInterface) => {
             const values = Object.values(patientDetails);
             const keys = Object.keys(patientDetails);
             const formattedLabels = keys.map((key) => convertToReadableString(key));
-
+            
             const translatedLabels = await translateLabels(formattedLabels);
-
+            
             const _labels = keys.map((label, i) => ({
                 key: label,
                 value: values[i],
-                label: translatedLabels[i]
+                label: translatedLabels[i],
+                originalLabel: formattedLabels[i]
             }));
 
             setLabels(_labels as Label[]);
@@ -82,7 +85,12 @@ const ParentDetailsSection = (props: ParentDetailsSectionInterface) => {
             {labels
                 ? labels.map((label) => (
                     <div key={label.key} style={styles.detailContainer}>
-                        <span style={styles.detailTitle} translate="yes">{label.label}</span>
+                        <TranslationTooltip
+                            originalText={label.originalLabel}
+                            translatedText={label.label}
+                        >
+                            <span style={styles.detailTitle} translate="yes">{label.label}</span>
+                        </TranslationTooltip>
                         <InputTag>{label.value}</InputTag>
                     </div>
                 )) : (

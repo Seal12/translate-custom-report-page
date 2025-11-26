@@ -4,6 +4,7 @@ import { generateXrayAnalysisSummary } from "../utils/strings";
 import { TranslationApi } from "../fetches/api";
 import { useReportContext } from "../contexts/ReportContext";
 import { TranslationLang } from "../utils/constants";
+import TranslationTooltip from "./TranslationTooltip";
 
 const styles = {
     title: {
@@ -30,6 +31,7 @@ const defaultAdditionalInfo: AdditionalInfo = {
 const ReportAdditionalInformationSection = () => {
     const { language } = useReportContext();
     const [additionalInfo, setAdditionalInfo] = useState<AdditionalInfo>(defaultAdditionalInfo);
+    const [originalSummary, setOriginalSummary] = useState<string>("");
 
     const translateAdditionalInfo = useCallback(async (summary: string) => {
         const info = [
@@ -43,23 +45,36 @@ const ReportAdditionalInformationSection = () => {
             summary: translatedSummary.translatedText[1]
                 || summary,
         });
+        setOriginalSummary(summary);
     }, [language]);
 
     useEffect(() => {
+        const summary = generateXrayAnalysisSummary();
         if (language !== TranslationLang.English) {
-            translateAdditionalInfo(generateXrayAnalysisSummary());
+            translateAdditionalInfo(summary);
         } else {
             setAdditionalInfo({
                 header: defaultAdditionalInfo.header,
-                summary: generateXrayAnalysisSummary(),
+                summary: summary,
             });
+            setOriginalSummary(summary);
         }
     }, [language, translateAdditionalInfo]);
 
     return (
         <div translate="yes">
-            <span style={styles.title}>{additionalInfo.header}: </span>
-            <InputTag editable={true}>{additionalInfo.summary}</InputTag>
+            <TranslationTooltip
+                originalText={defaultAdditionalInfo.header}
+                translatedText={additionalInfo.header}
+            >
+                <span style={styles.title}>{additionalInfo.header}: </span>
+            </TranslationTooltip>
+            <TranslationTooltip
+                originalText={originalSummary}
+                translatedText={additionalInfo.summary}
+            >
+                <InputTag editable={true}>{additionalInfo.summary}</InputTag>
+            </TranslationTooltip>
         </div>
     );
 };

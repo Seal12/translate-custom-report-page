@@ -1,9 +1,12 @@
 import { CSSProperties, ReactNode } from "react";
+import TranslationTooltip from "./TranslationTooltip";
 
 interface ReportSectionInterface {
     children?: ReactNode;
     title: string | ReactNode;
+    originalTitle?: string;
     secondaryText?: string | ReactNode;
+    originalSecondaryText?: string;
     style?: CSSProperties;
     contentWrapperStyle?: CSSProperties;
 }
@@ -29,16 +32,37 @@ const styles = {
 };
 
 const ReportSection = (props: ReportSectionInterface) => {
-    const { title, children, secondaryText, style, contentWrapperStyle } = props;
+    const { title, originalTitle, children, secondaryText, originalSecondaryText, style, contentWrapperStyle } = props;
+    
+    const titleElement = typeof title === "string" && originalTitle ? (
+        <TranslationTooltip originalText={originalTitle} translatedText={title}>
+            <span style={styles.titleText} translate="yes">
+                {title}
+            </span>
+        </TranslationTooltip>
+    ) : (
+        <span style={styles.titleText} translate="yes">
+            {title}
+        </span>
+    );
+
+    const secondaryTextElement = typeof secondaryText === "string" && originalSecondaryText ? (
+        <TranslationTooltip originalText={originalSecondaryText} translatedText={secondaryText}>
+            <span style={styles.titleText} translate="yes">
+                {secondaryText}
+            </span>
+        </TranslationTooltip>
+    ) : (
+        <span style={styles.titleText} translate="yes">
+            {secondaryText}
+        </span>
+    );
+
     return (
         <div style={{ ...styles.container, ...style }}>
             <div style={styles.headerContainer}>
-                <span style={styles.titleText} translate="yes">
-                    {title}
-                </span>
-                <span style={styles.titleText} translate="yes">
-                    {secondaryText}
-                </span>
+                {titleElement}
+                {secondaryText && secondaryTextElement}
             </div>
             <div style={{ ...styles.childrenWrapper, ...contentWrapperStyle }}>
                 {children}

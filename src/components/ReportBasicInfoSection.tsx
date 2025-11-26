@@ -4,6 +4,7 @@ import ContactInfoSection from "./ContactInfoSection";
 import ParentDetailsSection from "./ParentDetailsSection";
 import ReportFindings from "./ReportFindings";
 import { useReportContext } from "../contexts/ReportContext";
+import TranslationTooltip from "./TranslationTooltip";
 
 const styles = {
     container: {
@@ -34,12 +35,13 @@ const styles = {
 };
 
 const ReportBasicInfoSection = () => {
-    const { fields } = useReportContext();
+    const { fields, originalFields } = useReportContext();
 
     return (
         <div>
             <ReportSection
                 title={fields.reportTitle}
+                originalTitle={originalFields.reportTitle}
                 secondaryText="ID: 91"
             >
                 <div style={styles.container}>
@@ -50,21 +52,32 @@ const ReportBasicInfoSection = () => {
                             paddingRight: "31%",
                         }}
                     >
-                        <span style={styles.segmentTitle} translate="yes">
-                            {fields.service}:
-                        </span>
+                        <TranslationTooltip
+                            originalText={originalFields.service}
+                            translatedText={fields.service}
+                        >
+                            <span style={styles.segmentTitle} translate="yes">
+                                {fields.service}:
+                            </span>
+                        </TranslationTooltip>
                         <span style={styles.segmentContent}>SignalRAY</span>
                     </div>
                     <div style={styles.segmentContainer}>
-                        <span style={styles.segmentTitle} translate="yes">
-                            {fields.date}:
-                        </span>
+                        <TranslationTooltip
+                            originalText={originalFields.date}
+                            translatedText={fields.date}
+                        >
+                            <span style={styles.segmentTitle} translate="yes">
+                                {fields.date}:
+                            </span>
+                        </TranslationTooltip>
                         <span style={styles.segmentContent}>01-01-1994</span>
                     </div>
                 </div>
             </ReportSection>
             <ReportSection
                 title={fields.hospitalDetailsTitle}
+                originalTitle={originalFields.hospitalDetailsTitle}
                 contentWrapperStyle={{
                     width: "100%",
                     justifyContent: "space-around",
@@ -78,18 +91,25 @@ const ReportBasicInfoSection = () => {
                     style={styles.segmentImg}
                 />
             </ReportSection>
-            <ReportSection title={fields.patientDetailsTitle}>
+            <ReportSection
+                title={fields.patientDetailsTitle}
+                originalTitle={originalFields.patientDetailsTitle}
+            >
                 <ParentDetailsSection patientId={9} />
             </ReportSection>
             <ReportSection
                 title={fields.abnormalFindingsTitle}
+                originalTitle={originalFields.abnormalFindingsTitle}
                 secondaryText={fields.confidenceTitle}
+                originalSecondaryText={originalFields.confidenceTitle}
             >
                 <ReportFindings isNormal={false} editable={true} />
             </ReportSection>
             <ReportSection
                 title={fields.normalFindingsTitle}
+                originalTitle={originalFields.normalFindingsTitle}
                 secondaryText={fields.confidenceTitle}
+                originalSecondaryText={originalFields.confidenceTitle}
             >
                 <ReportFindings isNormal={true} editable={true} />
             </ReportSection>

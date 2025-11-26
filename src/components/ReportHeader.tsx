@@ -1,5 +1,6 @@
 import { useReportContext } from "../contexts/ReportContext";
 import { TranslationLang } from "../utils/constants";
+import TranslationTooltip from "./TranslationTooltip";
 
 const styles = {
     container: {
@@ -45,7 +46,7 @@ const languageOptions = [
 ];
 
 const ReportHeader = () => {
-    const { fields, language, setLanguage } = useReportContext();
+    const { fields, originalFields, language, setLanguage } = useReportContext();
 
     const handleLanguageChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
         setLanguage(event.target.value as TranslationLang);
@@ -59,9 +60,14 @@ const ReportHeader = () => {
                 style={styles.logo}
             />
             <div style={styles.headerRight}>
-                <span style={styles.secondaryText} translate="yes">
-                    {fields.secondaryText}
-                </span>
+                <TranslationTooltip
+                    originalText={originalFields.secondaryText}
+                    translatedText={fields.secondaryText}
+                >
+                    <span style={styles.secondaryText} translate="yes">
+                        {fields.secondaryText}
+                    </span>
+                </TranslationTooltip>
                 <select
                     id="language-select"
                     value={language}

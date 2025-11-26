@@ -27,7 +27,7 @@ const styles = {
 };
 
 function App() {
-    const { additionalInformationTitle } = useReportContext();
+    const { additionalInformationTitle, originalAdditionalInformationTitle } = useReportContext();
 
     return (
         <div style={styles.wrapper}>
@@ -37,7 +37,10 @@ function App() {
                     <ReportBasicInfoSection />
                 </ReportPage>
                 <ReportPage>
-                    <ReportSection title={additionalInformationTitle}>
+                    <ReportSection
+                        title={additionalInformationTitle}
+                        originalTitle={originalAdditionalInformationTitle}
+                    >
                         <ReportAdditionalInformationSection />
                     </ReportSection>
                 </ReportPage>

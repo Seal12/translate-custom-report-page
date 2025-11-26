@@ -8,6 +8,7 @@ import { randomXrayFinding } from "../utils/strings";
 import { useReportContext } from "../contexts/ReportContext";
 import { TranslationApi } from "../fetches/api";
 import { TranslationLang } from "../utils/constants";
+import TranslationTooltip from "./TranslationTooltip";
 
 const styles = {
     gap3: {
@@ -79,6 +80,7 @@ const ReportFindings = ({
     const { language } = useReportContext();
 
     const [localFindings, setLocalFindings] = useState<Findings>([]);
+    const [originalFindings, setOriginalFindings] = useState<Findings>([]);
 
     const translateFindings = useCallback(async (findings: Findings) => {
         const findingNames = findings.map(finding => finding.name);
@@ -90,6 +92,7 @@ const ReportFindings = ({
         }));
         
         setLocalFindings(_findings);
+        setOriginalFindings(findings);
     }, [language]);
 
     useEffect(() => {
@@ -97,6 +100,7 @@ const ReportFindings = ({
 
         if (language === TranslationLang.English) {
             setLocalFindings(_localFindings);
+            setOriginalFindings(_localFindings);
         } else {
             translateFindings(_localFindings);
         }
@@ -104,11 +108,12 @@ const ReportFindings = ({
 
     return (
         <div style={styles.gap3}>
-            {localFindings.map((finding) =>
+            {localFindings.map((finding, index) =>
                 editable || !editable ? (
                     <div key={finding.id} style={styles.smGap4}>
                         <ReportFinding
                             finding={finding}
+                            originalName={originalFindings[index]?.name || finding.name}
                             isNormal={isNormal}
                             editable={editable}
                             checked={editable}
@@ -152,11 +157,13 @@ const Pill = ({
 
 const ReportFinding = ({
     finding,
+    originalName,
     isNormal,
     editable,
     checked,
 }: {
     finding: Finding;
+    originalName: string;
     isNormal: boolean;
     editable: boolean;
     checked: boolean;
@@ -176,14 +183,19 @@ const ReportFinding = ({
                         onCheckedChange={onCheckedChange}
                     />
                 )}
-                <div
-                    style={{
-                        color: checkedStatus
-                            ? "text-sp-dark-blue"
-                            : "text-report-light-gray ",
-                    }}
-                    translate="yes"
-                >{`${finding.name}`}</div>
+                <TranslationTooltip
+                    originalText={originalName}
+                    translatedText={finding.name}
+                >
+                    <div
+                        style={{
+                            color: checkedStatus
+                                ? "text-sp-dark-blue"
+                                : "text-report-light-gray ",
+                        }}
+                        translate="yes"
+                    >{`${finding.name}`}</div>
+                </TranslationTooltip>
             </div>
             <div style={styles.gap25}>
                 <Pill filled={true} isNormal={isNormal} checked={checked} />

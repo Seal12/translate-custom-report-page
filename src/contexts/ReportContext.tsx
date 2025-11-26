@@ -23,7 +23,9 @@ interface ReportState {
     language: TranslationLang;
     setLanguage: (language: TranslationLang) => void;
     fields: ReportFields;
+    originalFields: ReportFields;
     additionalInformationTitle: string;
+    originalAdditionalInformationTitle: string;
     isLoading: boolean;
 }
 
@@ -44,7 +46,11 @@ export const ReportProvider: React.FC<ReportProviderProps> = ({ children }) => {
     const [fields, setFields] = useState<ReportFields>({
         ...defaultFields,
     });
+    const [originalFields] = useState<ReportFields>({
+        ...defaultFields,
+    });
     const [additionalInformationTitle, setAdditionalInformationTitle] = useState<string>(additionalInformation.title);
+    const [originalAdditionalInformationTitle] = useState<string>(additionalInformation.title);
 
     const setLanguage = (newLanguage: TranslationLang) => {
         LocalStorage.setItem("language", newLanguage);
@@ -55,7 +61,9 @@ export const ReportProvider: React.FC<ReportProviderProps> = ({ children }) => {
         language,
         setLanguage,
         fields,
+        originalFields,
         additionalInformationTitle,
+        originalAdditionalInformationTitle,
         isLoading,
     };
 
@@ -69,13 +77,14 @@ export const ReportProvider: React.FC<ReportProviderProps> = ({ children }) => {
         setIsLoading(true);
         if (language === TranslationLang.English) {
             resetFields();
+            setAdditionalInformationTitle(additionalInformation.title);
             setIsLoading(false);
 
             return;
         }
 
         const fieldsToTranslate = Object.values(defaultFields);
-        fieldsToTranslate.push(additionalInformationTitle);
+        fieldsToTranslate.push(additionalInformation.title);
 
         TranslationApi.translate(fieldsToTranslate, language).then((data) => {
             const translatedFields = Object.keys(defaultFields).map((key, i) => {
@@ -86,15 +95,15 @@ export const ReportProvider: React.FC<ReportProviderProps> = ({ children }) => {
                 return Object.assign(acc, curr);
             }, {} as Partial<ReportFields>);
 
-            setFields({
-                ...fields,
+            setFields((prevFields) => ({
+                ...prevFields,
                 ...translatedFields,
-            });
+            }));
 
             setAdditionalInformationTitle(data.translatedText[fieldsToTranslate.length-1]);
             setIsLoading(false);
         });
-    }, [language, setFields, resetFields]);
+    }, [language, resetFields]);
 
     useEffect(() => {
         const cachedLanguage = LocalStorage.getItem("language");

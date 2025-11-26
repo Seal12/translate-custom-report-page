@@ -28,11 +28,15 @@ export class TranslationApi {
                 target: targetLanguage,
                 format: 'text',
             };
-            console.log("data: ", data);
 
             const cache = await TranslationApi.getCache(data);
+
             if (cache) {
-                return cache;
+                return {
+                    ...cache,
+                    ok: true,
+                    error: null,
+                };
             }
     
             const response = await fetch(`${TranslationApi.apiUrl}/translate`, {
@@ -49,7 +53,6 @@ export class TranslationApi {
                 error: null,
                 ok: true
             };
-            // return response.json();
         } catch (error) {
             console.error('Error translating text:', error);
 
