@@ -18,3 +18,11 @@ export const loadingText = "Loading...";
 export const additionalInformation = {
     title: "Additional Information",
 };
+
+export enum TranslationLang {
+    English = "en",
+    German = "de",
+    Spanish = "es",
+    French = "fr",
+    Portuguese = "pt",
+}

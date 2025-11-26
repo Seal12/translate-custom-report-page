@@ -5,7 +5,7 @@ import ReportPage from "./components/ReportPage";
 import ReportSection from "./components/ReportSection";
 import ReportBasicInfoSection from "./components/ReportBasicInfoSection";
 import ReportAdditionalInformationSection from "./components/ReportAdditionalInformationSection";
-import { additionalInformation } from "./utils/constants";
+import { useReportContext } from "./contexts/ReportContext";
 
 const styles = {
     wrapper: {
@@ -27,6 +27,8 @@ const styles = {
 };
 
 function App() {
+    const { additionalInformationTitle } = useReportContext();
+
     return (
         <div style={styles.wrapper}>
             <div style={styles.container}>
@@ -35,7 +37,7 @@ function App() {
                     <ReportBasicInfoSection />
                 </ReportPage>
                 <ReportPage>
-                    <ReportSection title={additionalInformation.title}>
+                    <ReportSection title={additionalInformationTitle}>
                         <ReportAdditionalInformationSection />
                     </ReportSection>
                 </ReportPage>
