@@ -2,7 +2,7 @@ import { TranslationLang } from '../utils/constants';
 import * as LocalStorage from "../utils/localStorage";
 
 export class TranslationApi {
-    private static readonly apiUrl = 'http://localhost:5001';
+    private static readonly apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
 
     private static async getCache(data: any) {
         const cacheKey = JSON.stringify(data);
