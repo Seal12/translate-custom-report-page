@@ -1,5 +1,6 @@
 import React from "react";
 import "./App.css";
+import { Toaster } from "react-hot-toast";
 import ReportHeader from "./components/ReportHeader";
 import ReportPage from "./components/ReportPage";
 import ReportSection from "./components/ReportSection";
@@ -30,22 +31,41 @@ function App() {
     const { additionalInformationTitle, originalAdditionalInformationTitle } = useReportContext();
 
     return (
-        <div style={styles.wrapper}>
-            <div style={styles.container}>
-                <ReportHeader />
-                <ReportPage>
-                    <ReportBasicInfoSection />
-                </ReportPage>
-                <ReportPage>
-                    <ReportSection
-                        title={additionalInformationTitle}
-                        originalTitle={originalAdditionalInformationTitle}
-                    >
-                        <ReportAdditionalInformationSection />
-                    </ReportSection>
-                </ReportPage>
+        <>
+            <Toaster
+                position="top-right"
+                toastOptions={{
+                    duration: 5000,
+                    style: {
+                        background: "#E53E3E",
+                        color: "#fff",
+                    },
+                    error: {
+                        duration: 5000,
+                        style: {
+                            background: "#E53E3E",
+                            color: "#fff",
+                        },
+                    },
+                }}
+            />
+            <div style={styles.wrapper}>
+                <div style={styles.container}>
+                    <ReportHeader />
+                    <ReportPage>
+                        <ReportBasicInfoSection />
+                    </ReportPage>
+                    <ReportPage>
+                        <ReportSection
+                            title={additionalInformationTitle}
+                            originalTitle={originalAdditionalInformationTitle}
+                        >
+                            <ReportAdditionalInformationSection />
+                        </ReportSection>
+                    </ReportPage>
+                </div>
             </div>
-        </div>
+        </>
     );
 }
 

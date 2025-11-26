@@ -7,6 +7,7 @@ import { loadingText, TranslationLang } from "../utils/constants";
 import { useReportContext } from "../contexts/ReportContext";
 import { TranslationApi } from "../fetches/api";
 import TranslationTooltip from "./TranslationTooltip";
+import toast from "react-hot-toast";
 
 const styles = {
     container: {
@@ -60,6 +61,7 @@ const ParentDetailsSection = (props: ParentDetailsSectionInterface) => {
             }
         } catch (error) {
             console.error('Failed to translate labels:', error);
+            toast.error('Failed to translate patient details. Displaying original text.');
             return labels;
         }
     }, [language]);

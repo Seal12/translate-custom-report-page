@@ -3,6 +3,7 @@ import { TranslationLang, reportHeader, additionalInformation } from "../utils/c
 import { TranslationApi } from "../fetches/api";
 import { reportBasicInfo } from "../utils/constants";
 import * as LocalStorage from "../utils/localStorage";
+import toast from "react-hot-toast";
 
 interface ReportFields {
     secondaryText: string;
@@ -107,6 +108,7 @@ export const ReportProvider: React.FC<ReportProviderProps> = ({ children }) => {
             })
             .catch((error) => {
                 console.error('Translation failed:', error);
+                toast.error('Failed to translate content. Please try again or refresh the page.');
             })
             .finally(() => {
                 setIsLoading(false);

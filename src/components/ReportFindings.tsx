@@ -9,6 +9,7 @@ import { useReportContext } from "../contexts/ReportContext";
 import { TranslationApi } from "../fetches/api";
 import { TranslationLang } from "../utils/constants";
 import TranslationTooltip from "./TranslationTooltip";
+import toast from "react-hot-toast";
 
 const styles = {
     gap3: {
@@ -102,6 +103,7 @@ const ReportFindings = ({
             }
         } catch (error) {
             console.error('Failed to translate findings:', error);
+            toast.error('Failed to translate findings. Displaying original text.');
             setLocalFindings(findings);
             setOriginalFindings(findings);
         }

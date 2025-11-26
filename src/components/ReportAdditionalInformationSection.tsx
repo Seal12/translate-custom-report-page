@@ -5,6 +5,7 @@ import { TranslationApi } from "../fetches/api";
 import { useReportContext } from "../contexts/ReportContext";
 import { TranslationLang } from "../utils/constants";
 import TranslationTooltip from "./TranslationTooltip";
+import toast from "react-hot-toast";
 
 const styles = {
     title: {
@@ -56,6 +57,7 @@ const ReportAdditionalInformationSection = () => {
             setOriginalSummary(summary);
         } catch (error) {
             console.error('Failed to translate additional info:', error);
+            toast.error('Failed to translate summary. Displaying original text.');
             setAdditionalInfo({
                 header: defaultAdditionalInfo.header,
                 summary: summary,
