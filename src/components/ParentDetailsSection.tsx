@@ -50,11 +50,16 @@ const ParentDetailsSection = (props: ParentDetailsSectionInterface) => {
             return labels.map((label) => convertToReadableString(label));
         }
 
-        const { translatedText, ok } = await TranslationApi.translate(labels, language);
+        try {
+            const { translatedText, ok } = await TranslationApi.translate(labels, language);
 
-        if (ok) {
-            return translatedText;
-        } else {
+            if (ok && translatedText) {
+                return translatedText;
+            } else {
+                return labels;
+            }
+        } catch (error) {
+            console.error('Failed to translate labels:', error);
             return labels;
         }
     }, [language]);

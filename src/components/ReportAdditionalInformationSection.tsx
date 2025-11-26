@@ -38,14 +38,30 @@ const ReportAdditionalInformationSection = () => {
             defaultAdditionalInfo.header,
             summary,
         ]
-        const translatedSummary = await TranslationApi.translate(info, language);
+        
+        try {
+            const translatedSummary = await TranslationApi.translate(info, language);
 
-        setAdditionalInfo({
-            header: translatedSummary.translatedText[0] || defaultAdditionalInfo.header,
-            summary: translatedSummary.translatedText[1]
-                || summary,
-        });
-        setOriginalSummary(summary);
+            if (translatedSummary.ok && translatedSummary.translatedText) {
+                setAdditionalInfo({
+                    header: translatedSummary.translatedText[0] || defaultAdditionalInfo.header,
+                    summary: translatedSummary.translatedText[1] || summary,
+                });
+            } else {
+                setAdditionalInfo({
+                    header: defaultAdditionalInfo.header,
+                    summary: summary,
+                });
+            }
+            setOriginalSummary(summary);
+        } catch (error) {
+            console.error('Failed to translate additional info:', error);
+            setAdditionalInfo({
+                header: defaultAdditionalInfo.header,
+                summary: summary,
+            });
+            setOriginalSummary(summary);
+        }
     }, [language]);
 
     useEffect(() => {

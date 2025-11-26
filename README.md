@@ -47,7 +47,7 @@ REACT_APP_API_URL=http://localhost:5001
 - **Tooltips hover-only** - No keyboard or touch accessibility
 
 ### 5. Translation System
-- **On-demand translation** - Blocks UI during API calls, no pre-translation
+- **On-demand translation** - Async API calls with loading indicators, no pre-translation
 - **No translation caching** - Beyond basic localStorage
 - **Translation failures return original text** - No retry logic or error recovery
 - **Original text scattered** - Stored in context + component state (inconsistent)

@@ -84,15 +84,27 @@ const ReportFindings = ({
 
     const translateFindings = useCallback(async (findings: Findings) => {
         const findingNames = findings.map(finding => finding.name);
-        const translatedFindings = await TranslationApi.translate(findingNames, language);
-
-        const _findings = findings.map((finding, index) => ({
-            ...finding,
-            name: translatedFindings.translatedText[index]
-        }));
         
-        setLocalFindings(_findings);
-        setOriginalFindings(findings);
+        try {
+            const translatedFindings = await TranslationApi.translate(findingNames, language);
+
+            if (translatedFindings.ok && translatedFindings.translatedText) {
+                const _findings = findings.map((finding, index) => ({
+                    ...finding,
+                    name: translatedFindings.translatedText[index] || finding.name
+                }));
+                
+                setLocalFindings(_findings);
+                setOriginalFindings(findings);
+            } else {
+                setLocalFindings(findings);
+                setOriginalFindings(findings);
+            }
+        } catch (error) {
+            console.error('Failed to translate findings:', error);
+            setLocalFindings(findings);
+            setOriginalFindings(findings);
+        }
     }, [language]);
 
     useEffect(() => {

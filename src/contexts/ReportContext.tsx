@@ -86,23 +86,31 @@ export const ReportProvider: React.FC<ReportProviderProps> = ({ children }) => {
         const fieldsToTranslate = Object.values(defaultFields);
         fieldsToTranslate.push(additionalInformation.title);
 
-        TranslationApi.translate(fieldsToTranslate, language).then((data) => {
-            const translatedFields = Object.keys(defaultFields).map((key, i) => {
-                return {
-                    [key]: data.translatedText[i]
+        TranslationApi.translate(fieldsToTranslate, language)
+            .then((data) => {
+                if (data.ok && data.translatedText) {
+                    const translatedFields = Object.keys(defaultFields).map((key, i) => {
+                        return {
+                            [key]: data.translatedText[i]
+                        }
+                    }).reduce((acc, curr) => {
+                        return Object.assign(acc, curr);
+                    }, {} as Partial<ReportFields>);
+
+                    setFields((prevFields) => ({
+                        ...prevFields,
+                        ...translatedFields,
+                    }));
+
+                    setAdditionalInformationTitle(data.translatedText[fieldsToTranslate.length-1]);
                 }
-            }).reduce((acc, curr) => {
-                return Object.assign(acc, curr);
-            }, {} as Partial<ReportFields>);
-
-            setFields((prevFields) => ({
-                ...prevFields,
-                ...translatedFields,
-            }));
-
-            setAdditionalInformationTitle(data.translatedText[fieldsToTranslate.length-1]);
-            setIsLoading(false);
-        });
+            })
+            .catch((error) => {
+                console.error('Translation failed:', error);
+            })
+            .finally(() => {
+                setIsLoading(false);
+            });
     }, [language, resetFields]);
 
     useEffect(() => {

@@ -27,6 +27,17 @@ const styles = {
         fontSize: "0.9rem",
         cursor: "pointer",
         marginLeft: "0.5rem",
+        opacity: 1,
+    },
+    loadingIndicator: {
+        display: "inline-block",
+        width: "12px",
+        height: "12px",
+        border: "2px solid rgba(255, 255, 255, 0.3)",
+        borderTopColor: "#fff",
+        borderRadius: "50%",
+        animation: "spin 0.6s linear infinite",
+        marginLeft: "0.5rem",
     },
     headerRight: {
         display: "flex",
@@ -46,7 +57,7 @@ const languageOptions = [
 ];
 
 const ReportHeader = () => {
-    const { fields, originalFields, language, setLanguage } = useReportContext();
+    const { fields, originalFields, language, setLanguage, isLoading } = useReportContext();
 
     const handleLanguageChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
         setLanguage(event.target.value as TranslationLang);
@@ -72,6 +83,7 @@ const ReportHeader = () => {
                     id="language-select"
                     value={language}
                     onChange={handleLanguageChange}
+                    disabled={isLoading}
                     style={styles.languageDropdown}
                 >
                     {languageOptions.map((option) => (
@@ -80,6 +92,7 @@ const ReportHeader = () => {
                         </option>
                     ))}
                 </select>
+                {isLoading && <span style={styles.loadingIndicator}></span>}
             </div>
             
         </div>
